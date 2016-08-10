@@ -9,11 +9,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 
 public class MyGdxGame extends ApplicationAdapter {
@@ -24,7 +26,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	public PerspectiveCamera camera;
 	public Model model;
 	public ModelInstance instance;
-	
+	private Environment environment;
+
 	@Override
 	public void create () {
 		modelBatch = new ModelBatch();
@@ -42,6 +45,11 @@ public class MyGdxGame extends ApplicationAdapter {
 				VertexAttributes.Usage.Position| VertexAttributes.Usage.Normal);
 		instance = new ModelInstance(model);
 
+		// create environment for lighting
+		environment = new Environment();
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
 		font = new BitmapFont();
@@ -56,16 +64,16 @@ public class MyGdxGame extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		modelBatch.begin(camera);
-		modelBatch.render(instance);
+		modelBatch.render(instance,environment);
 		modelBatch.end();
 
-//		batch.begin();
-//
-//		//batch.draw(img, 0, 0);
-//		font.getData().setScale(6.0f);
-//		font.draw(batch, "Hello World from libgdx running in a fragment! :)", 100, 300);
-//
-//		batch.end();
+		batch.begin();
+
+		//batch.draw(img, 0, 0);
+		font.getData().setScale(6.0f);
+		font.draw(batch, "Hello World from libgdx running in a fragment! :)", 100, 300);
+
+		batch.end();
 	}
 	
 	@Override
