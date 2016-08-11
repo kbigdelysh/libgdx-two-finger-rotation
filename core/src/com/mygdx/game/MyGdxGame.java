@@ -52,11 +52,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		camera.update();
 
+		// Create model instance
 		ModelBuilder modelBuilder = new ModelBuilder();
-//		model = modelBuilder.createBox(5.0f, 5.0f, 5.0f,
-//				new Material(),
-//				VertexAttributes.Usage.Position| VertexAttributes.Usage.Normal);
-
 		model = modelBuilder.createBox(5.0f, 5.0f, 5.0f,
 				new Material(ColorAttribute.createDiffuse(Color.GREEN)),
 				VertexAttributes.Usage.Position| VertexAttributes.Usage.Normal);
@@ -68,7 +65,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		// Add camera controller
-		//cameraController = new CameraInputController(camera);
+		//cameraController = new CameraInputController(camera); // no rotation around Z axis
+
+		// MyCameraInputController has two-finger rotation around the vector
+		// from camera toward the center (0, 0, 0). Some times it is called rotation around Z axis.
 		cameraController = new MyCameraInputController(camera);
 		Gdx.input.setInputProcessor(cameraController);
 		//Gdx.input.setInputProcessor(new GestureDetector(new MyGestureListener()));
@@ -81,9 +81,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-
 		cameraController.update();
-
 
 //		Gdx.gl.glClearColor(0, 0, 0, 0);
 //		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -91,7 +89,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		modelBatch.begin(camera);
-		modelBatch.render(instance);//,environment);
+		modelBatch.render(instance);//,environment); // By adding environment, you get lighting system
 		modelBatch.end();
 
 		batch.begin();

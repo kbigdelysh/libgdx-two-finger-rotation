@@ -20,9 +20,6 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
-
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
@@ -126,25 +123,29 @@ public class MyCameraInputController extends GestureDetector {
         public boolean pinch (Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
 
             float totalRotationAngle;
+            // v1 is the vector between the first finger and the second finger when the user puts his
+            // fingers down for the first time. This vector remains the same as long as the user
+            // keeps both finger in contact with the screen.
             Vector2 v1 = new Vector2(initialPointer2.x - initialPointer1.x,
                     initialPointer2.y - initialPointer1.y);
-            Vector2 v2 = new Vector2(pointer2.x - pointer1.x, pointer2.y - pointer1.y);
 
+            // v2 is the vector between the first finger and the second finger while the user is rotating
+            // his fingers on the screen.
+            Vector2 v2 = new Vector2(pointer2.x - pointer1.x, pointer2.y - pointer1.y);
+            // The angle of v1 in polar coordinates.
             double initialAngle = Math.atan2(v1.y, v1.x);
+
+            // The angle of v2 in polar coordinates.
             double currentAngle = Math.atan2(v2.y, v2.x);
+
+            // angle between v1 and v2 in degrees
             totalRotationAngle = (float)Math.toDegrees(initialAngle - currentAngle);
 
-            //Vector3 v3 = new Vector3(0,0, v1.crs(v2));// v1.crs(v2) = v1 * v2 = k(v1.x*v2.y - v1.y * v2.x);
+            float deltaRotationAngle = (totalRotationAngle - previousAngle);
 
-            //totalRotationAngle = (float)Math.asin(v3/(v1.len()*v2.len()))*180.0f/(float)Math.PI;
-            //totalRotationAngle = 180.0f/(float)Math.PI*(float)Math.atan(v3.len()/Vector2.dot(v1.x,v1.y,v2.x,v2.y));
-             //totalRotationAngle = 180.0f/(float)Math.PI*(float)Math.atan2(v3.len(),v2.dot(v2));
-
-            float rotationAngle = (totalRotationAngle - previousAngle);
-//            if (angle < -180.f) angle += 360.0f;
-//            if (angle > 180.f) angle -= 360.0f;
             previousAngle = totalRotationAngle;
-            return controller.rotate(rotationAngle);
+
+            return controller.rotate(deltaRotationAngle);
         }
     };
 
@@ -250,11 +251,11 @@ public class MyCameraInputController extends GestureDetector {
     }
     public boolean rotate(float angle) {
             if (!alwaysScroll && activateKey != 0 && !activatePressed) return false;
-            camera.rotateAround(Vector3.Zero, camera.direction, angle);
-            //camera.rotateAround(Vector3.Zero, camera.direction, 1); // rotates around z opposite to right-hand rule.
+            // Rotate the camera around the camera direction axis which is the
+            // vector from the camera toward (0,0,0) because of camera.lookAt(0,0,0) inside the create().
+            camera.rotateAround(camera.position, camera.direction, angle);
             if (autoUpdate) camera.update();
             return true;
-
     }
 
     @Override
