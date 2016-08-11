@@ -1,28 +1,12 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
-
 /**
  * Created by kamran.shamloo on 2016-08-10.
+ * Most part of this code was copied from CameraInputController class. I added code for rotation
+ * around camera.direction axis (sometimes called rotation around Z axis).
  */
-/*******************************************************************************
- * Copyright 2011 See AUTHORS file.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.input.GestureDetector;
@@ -147,7 +131,7 @@ public class MyCameraInputController extends GestureDetector {
 
             return controller.rotate(deltaRotationAngle);
         }
-    };
+    }
 
     protected final MyCameraGestureListener gestureListener;
 
