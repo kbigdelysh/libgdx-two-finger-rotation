@@ -45,7 +45,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		});
 
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.position.set(10f, 10f, 10f);
+		camera.position.set(0f, 0f, 10f);
 		camera.lookAt(0,0,0);
 		camera.near = 1f;
 		camera.far = 300f;

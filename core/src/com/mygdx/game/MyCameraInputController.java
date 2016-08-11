@@ -84,10 +84,12 @@ public class MyCameraInputController extends GestureDetector {
     protected static class MyCameraGestureListener extends GestureAdapter {
         public MyCameraInputController controller;
         private float previousZoom;
+        private float previousAngle;
 
         @Override
         public boolean touchDown (float x, float y, int pointer, int button) {
             previousZoom = 0;
+            previousAngle = 0;
             return false;
         }
 
@@ -122,7 +124,27 @@ public class MyCameraInputController extends GestureDetector {
 
         @Override
         public boolean pinch (Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
-            return false;
+
+            float totalRotationAngle;
+            Vector2 v1 = new Vector2(initialPointer2.x - initialPointer1.x,
+                    initialPointer2.y - initialPointer1.y);
+            Vector2 v2 = new Vector2(pointer2.x - pointer1.x, pointer2.y - pointer1.y);
+
+            double initialAngle = Math.atan2(v1.y, v1.x);
+            double currentAngle = Math.atan2(v2.y, v2.x);
+            totalRotationAngle = (float)Math.toDegrees(initialAngle - currentAngle);
+
+            //Vector3 v3 = new Vector3(0,0, v1.crs(v2));// v1.crs(v2) = v1 * v2 = k(v1.x*v2.y - v1.y * v2.x);
+
+            //totalRotationAngle = (float)Math.asin(v3/(v1.len()*v2.len()))*180.0f/(float)Math.PI;
+            //totalRotationAngle = 180.0f/(float)Math.PI*(float)Math.atan(v3.len()/Vector2.dot(v1.x,v1.y,v2.x,v2.y));
+             //totalRotationAngle = 180.0f/(float)Math.PI*(float)Math.atan2(v3.len(),v2.dot(v2));
+
+            float rotationAngle = (totalRotationAngle - previousAngle);
+//            if (angle < -180.f) angle += 360.0f;
+//            if (angle > 180.f) angle -= 360.0f;
+            previousAngle = totalRotationAngle;
+            return controller.rotate(rotationAngle);
         }
     };
 
@@ -183,9 +205,10 @@ public class MyCameraInputController extends GestureDetector {
 
     protected boolean process (float deltaX, float deltaY, int button) {
         if (button == rotateButton) {
-            tmpV1.set(camera.direction).crs(camera.up).y = 0f;
-            camera.rotateAround(target, tmpV1.nor(), deltaY * rotateAngle);
-            camera.rotateAround(target, Vector3.Y, deltaX * -rotateAngle);
+            tmpV1.set(camera.direction).crs(camera.up);//.y = 0f;
+
+            camera.rotateAround(target, tmpV1.nor(), deltaY * rotateAngle);//originally it was tmpV1.nor() instead of Vector3.X
+            camera.rotateAround(target, camera.up, deltaX * -rotateAngle); // originally Vector3.y
         } else if (button == translateButton) {
             camera.translate(tmpV1.set(camera.direction).crs(camera.up).nor().scl(-deltaX * translateUnits));
             camera.translate(tmpV2.set(camera.up).scl(-deltaY * translateUnits));
@@ -224,6 +247,14 @@ public class MyCameraInputController extends GestureDetector {
 
     protected boolean pinchZoom (float amount) {
         return zoom(pinchZoomFactor * amount);
+    }
+    public boolean rotate(float angle) {
+            if (!alwaysScroll && activateKey != 0 && !activatePressed) return false;
+            camera.rotateAround(Vector3.Zero, camera.direction, angle);
+            //camera.rotateAround(Vector3.Zero, camera.direction, 1); // rotates around z opposite to right-hand rule.
+            if (autoUpdate) camera.update();
+            return true;
+
     }
 
     @Override
