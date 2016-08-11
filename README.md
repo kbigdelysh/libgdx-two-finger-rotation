@@ -1,5 +1,3 @@
-# libgdx-in-fragment
-Hello World program for libgdx running in a fragment using Android Studio 2.1
+# libgdx-two-finger-rotation
+An Android Studio app that shows two-finger rotation around Z axis using libgdx.
 
-
-![Alt text](/libgdx-fragment.PNG?raw=true "libgdx in fragment")
